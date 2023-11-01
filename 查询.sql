@@ -977,6 +977,7 @@ CREATE TABLE student(
    Sname VARCHAR(20) NOT NULL,
    Ssex VARCHAR(20) NOT NULL,
    Sbirthday DATETIME,
+   Sage INT,
    Class VARCHAR(20),
    CONSTRAINT PK_Sno PRIMARY KEY(Sno)
 );
@@ -995,8 +996,11 @@ CREATE TABLE Course(
    Cno VARCHAR(20) NOT NULL,
    Cname VARCHAR(20) NOT NULL,
    Tno VARCHAR(20) NOT NULL,
-   PRIMARY KEY(Cno)
+   CONSTRAINT PK_Cno PRIMARY KEY(Cno),
+   CONSTRAINT FK_Tno FOREIGN KEY(Tno) REFERENCES Teacher(Tno)
 );
+
+
 
 CREATE TABLE Score(
    Sno VARCHAR(20) NOT NULL,
@@ -1007,22 +1011,25 @@ CREATE TABLE Score(
    CONSTRAINT FK_cno FOREIGN KEY(cno) REFERENCES course(cno)
 );
 
-INSERT INTO student VALUES('108','曾华','男','1977-09-01','95033'),
-                          ('105','匡明','男','1975-10-02','95031'),
-                          ('107','王丽','女','1976-01-23','95033'),
-                          ('101','李军','男','1976-02-20','95033'),
-                          ('109','王芳','女','1975-02-10','95031'),
-                          ('103','陆君','男','1974-06-03','95031');
+INSERT INTO student VALUES('108','曾华','男','1977-09-01','46','95033'),
+                          ('105','匡明','男','1975-10-02','48','95031'),
+                          ('107','王丽','女','1976-01-23','47','95033'),
+                          ('101','李军','男','1976-02-20','47','95033'),
+                          ('109','王芳','女','1975-02-10','48','95031'),
+                          ('103','陆君','男','1974-06-03','49','95031');
 
-INSERT INTO course VALUES('3-105','计算机导论','824'),
-                         ('3-245','操作系统','804'),
-                         ('6-166','数字电路','856'),
-                         ('9-888','高等数学','831');
+
 
 INSERT INTO teacher VALUES('804','李诚','男','1958-12-02','副教授','计算机系'),
                           ('856','张旭','男','1969-03-12','讲师','电子工程系'),
                           ('825','王萍','女','1972-05-05','助教','计算机系'),
                           ('831','刘冰','女','1977-08-14','助教','电子工程系');
+                          
+INSERT INTO course VALUES('3-105','计算机导论','825'),
+                         ('3-245','操作系统','804'),
+                         ('6-166','数字电路','856'),
+                         ('9-888','高等数学','831');
+                          
 
 INSERT INTO score VALUES('103','3-245','86'),
                         ('105','3-245','75'),
@@ -1037,7 +1044,7 @@ INSERT INTO score VALUES('103','3-245','86'),
                         ('107','6-166','79'),
                         ('108','6-166','81');
 
--- alter table course add CONSTRAINT FK_Tno FOREIGN KEY(Tno) REFERENCES Teacher(Tno);
+alter table course add CONSTRAINT FK_Tno FOREIGN KEY(Tno) REFERENCES Teacher(Tno);
 
 -- 1查询Student表中的所有记录的Sname、Ssex和Class列。
 SELECT Sname,Ssex,Class FROM student;
@@ -1049,7 +1056,7 @@ SELECT * FROM student;
 SELECT * FROM score WHERE Degree BETWEEN 60 AND 80;
 -- 5查询Score表中成绩为85，86或88的记录
 SELECT * FROM score WHERE Degree='85' or Degree='86' OR Degree='88';
--- 6查询Student表中“95031”班或性别为“⼥”的同学记录。
+-- 6查询Student表中“95031”班或性别为“女”的同学记录。
 SELECT * FROM student WHERE class='95031' OR Ssex='女';
 -- 7以Class降序查询Student表的所有记录。
 SELECT * FROM student ORDER BY Class DESC;
@@ -1081,87 +1088,13 @@ SELECT class,COUNT(Ssex) FROM student WHERE Ssex='男' COUNT(Ssex)>2;
 -- 查询Student表中不姓“王”的同学记录
 SELECT * FROM student WHERE sname NOT LIKE '王%';
 -- 查询Student表中每个学生的姓名和年龄。
-SELECT sname 姓名, Sbirthday=2023-10-29-Sbirthday 年龄 from student;
+SELECT sname 姓名,Sage 年龄 from student;
 -- 查询Student表中最大和最小的Sbirthday日期值。
 SELECT max(Sbirthday) 最大,MIN(Sbirthday) 最小 FROM student;
 -- 以班号和年龄从大到小的顺序查询Student表中的全部记录。
 SELECT * FROM student ORDER BY class DESC,Sbirthday DESC;
 -- 查询“男”教师及其所上的课程。
 SELECT Tname 教师,Tsex 性别,Cname 课程名 FROM teacher JOIN course ON teacher.Tno=course.Tno WHERE Tsex='男';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1238,80 +1171,338 @@ ALTER TABLE 电影_演员信息 ADD PRIMARY KEY(影片编号,演员编号);
 
 SELECT 影片编号,发行公司,影片类型 FROM 电影信息表 WHERE 片名 LIKE '我和我的%';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+-- 
+SELECT TO_DAYS(NOW()) 天数;
+-- 
+SELECT DAYOFYEAR('2023-10-30') 天数;
+-- 
+SELECT WEEK('2023-10-30') 周数;
+
+SELECT 片名,CHAR_LENGTH(片名) FROM 电影信息表;
+
+SELECT 发行公司,LENGTH(发行公司) FROM 电影信息表;
+
+SELECT 发行公司,MID(发行公司,2,8) 截取信息 FROM 电影信息表;
+
+SELECT 影片编号,LENGTH(影片编号) FROM 电影信息表;
+
+SELECT 影片编号,MID(影片编号,2,6) 截取编号 FROM 电影信息表;
+
+
+-- (1)从student表中查看修了c01课程学生的sno，sname，sage，sdept
+SELECT sno,sname,sage,sdept FROM student where sno in(SELECT sno FROM sc WHERE cno='c01');
+-- (2)从sc表中查看计算机系、信息系、男生的选课情况
+SELECT category FROM sc WHERE sno IN(select sno FROM student WHERE sdept='计算机系' AND '信息系' or Ssex='男');   
+-- (3)从student表中查看修了c02课程，且成绩及格的学生所在的系别
+SELECT sdept FROM student WHERE sno IN(SELECT sno FROM sc WHERE cno='c02' AND grade>60);
+-- (4)查看修了数据库基础课程的学生的sname，sage，sdept
+SELECT sname,sage,sdept FROM student WHERE sno IN(SELECT sno FROM sc WHERE cno IN(SELECT cno FROM course WHERE cname='数据库基础'));
+
+-- (1)创建选课表(学号，课程号，成绩)
+CREATE TABLE 选课表(
+   学号 varchar(10),
+   课程号 VARCHAR(10),student
+   成绩 INT
+);
+-- (2)从sc表中查看修了c01、c02，且成绩及格的学生选课情况，插入到选课表
+INSERT INTO 选课表 SELECT sno,cno,grade FROM sc WHERE cno='c01' OR cno='c02' AND grade>60;
+-- (3)将sc表中修了数据库基础课程的学生的成绩添加20分
+UPDATE sc SET grade=grade+20 WHERE cno IN(SELECT cno FROM course WHERE cname='数据库基础');
+-- (4)将sc表中信息系的学生成绩减10分
+UPDATE sc SET grade=grade-10 WHERE sno IN(SELECT sno FROM student WHERE sdept='信息系');
+-- (5)从sc表中删除修了数据库基础课程的学生选课记录
+UPDATE sc WHERE cno IN(SELECT cno FROM course WHERE cname='数据库基础');
+
+
+
+-- 一．根据课堂七张表完成下列子查询：
+-- 1.查询成绩为大于90分的学生的学号、姓名。
+SELECT sno,sname FROM student WHERE sno IN(SELECT sno FROM sc WHERE grade>90);
+-- 2.查询数学系成绩80分以上的学生的学号、姓名
+SELECT sno,sname FROM student WHERE sdept='数学系' AND sno IN(SELECT sno FROM sc WHERE grade>80);
+-- 3.查询选修了“数据库基础”课程的学生的学号、姓名。
+SELECT sno,sname FROM student where sno in(select sno from sc where cno IN(SELECT cno FROM course WHERE cname='数据库基础'));
+-- 4.查询计算机系考试成绩最高的学生的姓名
+select sname FROM student WHERE sdept='计算机系' and sno IN(SELECT sno FROM sc having  MAX(grade)); 
+-- 5.从sc表中查看考试成绩低于c02课程平均成绩的选课信息
+SELECT * FROM sc WHERE cno='c02' and grade <(SELECT avg(grade) from sc WHERE cno='c02'); 
+
+
+SELECT avg(grade) from sc WHERE cno='c02';
+
+
+-- 为管理业务培训信息，建立3个表:
+-- S(S#,SN,SD,SA)S#,SN,SD,SA 分别代表学号，学员姓名，所属单位，学员年龄
+-- c(C#,CN)C#,CN 分别代表课程编号，课程名称
+-- sc(S#,C#,G)s#,C#,G 分别代表学号，所选的课程偏号，学习成绩
+
+CREATE DATABASE 业务培训;
+USE 业务培训;
+CREATE TABLE s(
+   sm VARCHAR(10),
+   sn VARCHAR(10),
+   sd VARCHAR(10),
+   sa INT
+);
+CREATE TABLE c(
+   cla VARCHAR(10),
+   cna VARCHAR(10)
+);
+CREATE TABLE sc(
+   sm VARCHAR(10),
+   cla VARCHAR(10),
+   ge DECIMAL(3,1)
+);
+
+INSERT INTO s VALUES('1010236','楚黎明','轨道交通',32),
+                    ('1010358','千歆琳','铁路运维',36),
+                    ('1156872','辛佳琳','交通运输',42),
+                    ('1056874','龙骁庬','航空乘务',28);
+
+INSERT INTO c VALUES('s1-101','税收基础'),
+                    ('k1-194','空乘礼仪'),
+                    ('y1-183','运维管理'),
+                    ('y2-156','运输管理'),
+                    ('s2-000','思想教育'),
+                    ('g1-123','行政管理');
+
+INSERT INTO sc VALUES('1010236','s1-101',80),
+                     ('1010358','k1-194',86),
+                     ('1156872','y2-156',76),
+                     ('1056874',null,79),
+                     ('1010236','k1-194',82),
+                     ('1010358','y1-183',84),
+                     ('1156872','g1-123',72),
+                     ('1056874','k1-194',76),
+                     ('1010236','y1-183',84),
+                     ('1010358',null,63),
+                     ('1156872','s2-000',76),
+                     ('1056874','y1-183',70),
+                     ('1010236','y2-156',73),
+                     ('1010358','y2-156',82),
+                     ('1156872',null,81),
+                     ('1056874','s1-101',92),
+                     ('1010236','s2-000',96),
+                     ('1010358',null,56),
+                     ('1156872','y1-183',67),
+                     ('1056874','g1-123',97),
+                     ('1010236','g1-123',79),
+                     ('1010358','g1-123',58),
+                     ('1156872','s1-101',89),
+                     ('1056874','s2-000',99);
+                    
+
+
+-- (1)使用标准 SQL 套语句查询选修课程名称为’税收基础’的学员学号和姓名?
+SELECT sm,sn FROM s WHERE sm IN(SELECT sm FROM sc WHERE cla IN(SELECT cla FROM c WHERE cna='税收基础'));
+-- (2)使用标准 SQL 语查询选修课程编号为’y2-156’的学员姓名和所属单位?
+SELECT sn,sd FROM s WHERE sm IN(SELECT sm FROM sc WHERE cla IN(SELECT cla FROM c WHERE cla='y2-156'));
+-- (3)使用标准SQL套语查询不选修课程编号为’s1-101’的学员姓名和所属单位?
+SELECT sn,sd FROM s JOIN sc ON s.sm=sc.sm JOIN c ON sc.cla=c.cla WHERE sc.cla not IN(SELECT cla FROM c WHERE cla='y2-156');
+-- (4)查询选修了课程的学员人数
+SELECT count(cla) FROM c WHERE cna is not NULL;
+-- (5)查询选修课程超过 5门的学员学号和所属单位?
+SELECT sn,sd FROM s WHERE sm IN(SELECT sm FROM sc WHERE cla IN(SELECT cla FROM c group BY cna having count(cna)>5));
+
+
+CREATE DATABASE student;
+USE student;
+CREATE TABLE Student(
+   stuld VARCHAR(10),
+   stuname VARCHAR(10),
+   stuage int,
+   stusex CHAR(2)
+);
+CREATE TABLE Teacher(
+   Teald VARCHAR(10),
+   Teaname VARCHAR(10)
+);
+CREATE TABLE course(
+   Courseld VARCHAR(10),
+   Coursename VARCHAR(10),
+   Teald VARCHAR(10)
+);
+
+CREATE TABLE score(
+   Stuld VARCHAR(10),
+   Courseld VARCHAR(10),
+   StuScore int
+);
+
+INSERT INTO student VALUES('0001','赵雷','18','男'),
+                          ('0002','钱电','18','男'),
+                          ('0003','季云','18','男'),
+                          ('0004','周梅','18','男'),
+                          ('0005','吴兰','20','女'),
+								  ('0006','郑竹','20','女'),
+                          ('0007','孙峰','20','女');
+
+INSERT INTO teacher VALUES('0001','张三'),
+                          ('0002','李四'),
+                          ('0003','王五');
+
+INSERT INTO course VALUES('0001','语文','0002'),
+                         ('0002','数学','0001'),
+                         ('0003','英语','0003');
+
+INSERT INTO score VALUES('0001','0001','80'),
+                        ('0001','0002','90'),
+                        ('0001','0003','99'),
+                        ('0002','0002','60'),
+                        ('0002','0003','80'),
+                        ('0003','0001','80'),
+                        ('0003','0002','80'),
+                        ('0003','0003','80'),
+                        ('0004','0001','50'),
+                        ('0004','0002','30'),
+                        ('0004','0003','20'),
+                        ('0005','0001','76'),
+                        ('0005','0002','87'),
+                        ('0006','0001','31'),
+                        ('0006','0003','34'),
+                        ('0007','0002','89'),
+                        ('0007','0003','98');
+                        
+                        
+-- 1.查询平均成绩大于60分的同学的学生编号和学生姓名和平均成绩
+SELECT student.stuld,stuname,AVG(stuscore) FROM student JOIN score ON student.stuld=score.stuld GROUP BY stuld having avg(stuscore)>60;
+-- 2查询所有学生的学号、姓名、选课数、总成绩
+SELECT student.stuld,stuname,COUNT(courseld),SUM(stuscore) FROM student JOIN score ON student.stuld=score.stuld GROUP BY stuld;
+-- 3.查询姓“张”的老师的个数
+SELECT COUNT(teaname) 个数 FROM teacher WHERE teaname LIKE '张%';
+-- 4.查询学过“张三”老师所教的所有课的同学的学号、姓名
+SELECT stuld,stuname FROM student WHERE stuld IN(SELECT stuld FROM score WHERE courseld IN(SELECT courseld FROM course WHERE teald in(select teald from teacher where teaname='张三')));
+-- 5.查询学过编号为“0001”的课程并且也学过编号为“0002”的课程的学生的学号、姓名
+SELECT s.stuld, s.stuname
+FROM student s
+JOIN score c1 ON s.stuld = c1.stuld AND c1.courseld = '0001' 
+JOIN score c2 ON s.stuld = c2.stuld AND c2.courseld = '0002';
+-- 6查询所有课程成绩小于等于60分的学生的学号、姓名
+SELECT student.stuld,stuname FROM student JOIN score ON student.stuld=score.Stuld WHERE stuscore<60 GROUP BY student.stuld;
+select Student.Stuld,Student.StuName from student where Student.Stuld not in (select Student.Stuld from student,score where Student.Stuld = Score.Stuld and StuScore > 60);
+-- 7.查询至少有一门课与学号为“0001”的学生所学课程相同的学生的学号和姓名
+SELECT stuld,stuname FROM student WHERE stuld='0001' AND stuld IN(SELECT stuld FROM score WHERE courseld IN(SELECT courseld FROM course;
+SELECT stuld FROM student WHERE stuld='0001';
+SELECT courseld FROM score WHERE stuld IN(SELECT stuld FROM student WHERE stuld='0001');
+SELECT stuld FROM score WHERE courseld IN(SELECT courseld FROM score WHERE stuld IN(SELECT stuld FROM student WHERE stuld='0001'));
+
+SELECT stuname,stuld FROM student WHERE stuld IN(
+SELECT stuld FROM score WHERE courseld IN(
+SELECT courseld FROM score WHERE stuld IN(
+SELECT stuld FROM student WHERE stuld='0001')));
+-- 8.查询每门课程被选修的学生数
+-- SELECT COUNT(stuld) FROM student WHERE stuld IN(SELECT stuld FROM score WHERE courseld IN(SELECT courseld FROM course WHERE coursename in(SELECT coursename FROM course GROUP BY courseld)));
+SELECT coursename,count(course.courseld) FROM score left outer join course on score.courseld=course.courseld GROUP BY course.courseld;
+SELECT coursename FROM course;
+SELECT count(courseld) FROM score  GROUP BY courseld;
+-- 9.查询平均成绩大于85的所有学生的学号、姓名和平均成绩
+SELECT stuld,stuname FROM 
+
+
+select Course.courseName,count(Score.courseld) from Score,Course where Score.courseld = Course.courseld group by Score.courseld;
+
+-- (1)创建一个视图view_s01，包含计算机系和信息系学生的个人数据
+CREATE VIEW view_s01 AS SELECT * FROM student WHERE sdept='计算机系' OR sdept='信息系';
+-- (2)创建一个视图view_s02，包含每一门课的选课人数，以及课程号
+CREATE VIEW view_s02 AS SELECT COUNT(cname),course.cno FROM course,sc WHERE course.cno=sc.cno GROUP BY sno;
+-- (3)创建一个视图view_s03，包含成绩在70-90之间，且修了数据库基础的学生的学号，姓名，年龄，课程号，课程名，成绩
+CREATE VIEW view_s03 AS SELECT student.sno,sname,sage,sc.cno,cname,grade FROM student JOIN sc ON student.sno=sc.sno JOIN course ON sc.cno=course.cno WHERE grade BETWEEN 70 AND 90 and cname='数据库基础';
+-- (4)修改view_s01视图结构，包含所有学生的个人信息
+ALTER VIEW view_s01 AS SELECT sno,sname,ssex,sage,sdept FROM student;
+-- (5)向view_s01中插入任意三条数据，进行查看验证(视图+原表都查看)
+INSERT INTO view_s01 VALUES('9531202','李刚','男','23','英语系'),
+                           ('9531203','冯刚','男','26','英语系'),
+                           ('9531205','奎六','男','25','语文系');
+-- (6)修改view_s01视图中计算机系和信息系年龄加10岁
+UPDATE view_s01 SET sage=sage+10 WHERE sdept='计算机系' or sdept='信息系';
+-- (7)删除view_s03
+DROP VIEW view_s03;
+-- (8)删除view_s01中新插入的三条数据
+
+
+
+
+
+
+
+
+ALTER TABLE course ADD UNIQUE(cname);
+
+CREATE UNIQUE INDEX index_cname ON course(cname);
+
+DROP INDEX index_cname ON course;
+
+CREATE  INDEX index_cname ON course(cname);
+
+INSERT INTO course value('c07','VB','3','2');
+
+
+
+
+-- 1. 使用上课用到的七张表，创建满足以下条件的视图
+-- 1) 查询学生的学号，姓名，所在院系，课程号，课程名，课程学分
+CREATE VIEW view_01 AS SELECT student.sno,sname,sdept,sc.cno,cname,semester FROM student JOIN sc ON student.sno=sc.sno JOIN course ON sc.cno=course.cno;
+-- 2) 查询学生的学号，姓名，选修课程名，成绩
+CREATE VIEW view_02 AS SELECT student.sno,sname,cname,grade FROM student JOIN sc ON student.sno=sc.sno JOIN course ON sc.cno=course.cno;
+-- 3) 查询每个学生的选课门数的视图，要求列出学生学号及选课门数
+CREATE VIEW view_03 AS SELECT student.sno,COUNT(cname) 选课门数 FROM student JOIN sc ON student.sno=sc.sno JOIN course ON sc.cno=course.cno GROUP BY student.sno;
+-- 4) 查询每个学生的选课学分的视图，要求列出学生学号及总学分
+create view view_04 AS SELECT student.sno,SUM(semester) 总分数 FROM student JOIN sc ON student.sno=sc.sno JOIN course ON sc.cno=course.cno GROUP BY student.sno;
+-- 注意事项：创建视图时，如果有遇到聚合函数，记得起别名
+-- 2. 利用以上视图，完成如下查询
+-- 1) 查询全部考试成绩大于等于90分的学生姓名，课程名和成绩
+SELECT sno,cname,grade FROM view_02 WHERE grade>90;
+-- 2) 查询选课门数超过3门的学生学号和选课门数
+SELECT sno,选课门数 FROM view_03 WHERE 选课门数>3;
+-- 3) 查询选课学分超过10分的学生的学号，姓名，所在系和选课总学分
+SELECT view_01.sno,sname,sdept,总分数 from view_01 JOIN view_04 ON view_01.sno=view_04.sno WHERE 总分数>10;
+-- 3. 建立信息系学生的视图IS_Student
+CREATE VIEW IS_Student AS SELECT student.sno,sname,sage,cno,sdept  FROM student join sc on student.sno=sc.sno where sdept='信息系';
+-- 4. 建立信息系选修了‘c01’号课程的学生的视图V_IS_S1。
+CREATE VIEW V_IS_S1 AS SELECT * FROM view_01 WHERE sdept='信息系' and cno='c01';
+-- 5. 建立信息系选修了‘c01’号课程且成绩在90分以上的学生的视图V_IS_S2。
+CREATE VIEW v_is_s2 AS SELECT student.sno,sname FROM student JOIN sc ON student.sno=sc.sno WHERE sdept='信息系' and cno='c01' or grade>90;
+-- 6. 定义一个反映学生出生年份的视图Birth_S。
+CREATE VIEW birth_s AS SELECT YEAR(CURRENT_DATE()) - sage AS 出生年份 FROM student;
+-- 7. 定义一个存放每个学生的学号及平均成绩的视图S_G
+CREATE VIEW S_G AS SELECT sno,AVG(grade) 平均成绩 FROM sc GROUP BY sno;
+-- 8. 利用IS_Student视图，查询信息系年龄小于20岁的学生。
+SELECT sage FROM is_student WHERE sage<20;
+-- 9. 利用IS_Student视图，查询信息系选修了‘C01’课程的学生的学号和姓名。
+SELECT sno,sname FROM is_student WHERE sdept='信息系' AND cno='c01';
+-- 10. 利用S_G视图，查询平均成绩90分以上的学生的学号和平均成绩。
+SELECT sno,平均成绩 FROM s_g WHERE 平均成绩>90 GROUP BY sno;
+-- 11. 删除前边定义的IS_Student视图
+DROP VIEW is_student;
+
+
+
+CREATE DATABASE testing;
+USE testing;
+CREATE TABLE student(
+   sno varchar(10),
+   Sname varchar(10),
+   sage DATETIME,
+   Ssex varchar(10)
+);
+
+INSERT INTO student VALUES('01','赵雷','1990-01-01','男'),
+                          ('02','钱电','1990-12-21','男'),
+                          ('03','孙1','1990-05-20','男'),
+                          ('04','李','1990-08-06','男'),
+                          ('05','周','1991-12-01','女'),
+                          ('06','吴','1992-03-01','女'),
+                          ('07','郑','1989-07-01','女'),
+                          ('08','王','1990-01-20','女');
+                          
+CREATE TABLE 
+
+
+-- 1)查询出只有两门课程的全部学生的学号和姓名。
+select
+-- 2)查询男生，女生人数。
+SELECT stusex,COUNT(stusex) FROM student GROUP BY stusex;
+-- 3)查询“李”姓老师的数量
+SELECT teaname,COUNT(teaname) FROM teacher WHERE teaname LIKE '李%';
+-- 4)检索“01”课程分数小于60，按分数降序排列的学生信息。
+CREATE INDEX 学生信息 ON score(stuscore) WHERE cno='0001' AND stuscore<60 ORDER BY stuscore DESC;
