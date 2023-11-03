@@ -1506,3 +1506,37 @@ SELECT stusex,COUNT(stusex) FROM student GROUP BY stusex;
 SELECT teaname,COUNT(teaname) FROM teacher WHERE teaname LIKE '李%';
 -- 4)检索“01”课程分数小于60，按分数降序排列的学生信息。
 CREATE INDEX 学生信息 ON score(stuscore) WHERE cno='0001' AND stuscore<60 ORDER BY stuscore DESC;
+
+
+-- 1.查询出只选修了一门课程的全部学生的学号和姓名
+SELECT stuld,stuname FROM student WHERE stuld  IN(SELECT courseld FROM score GROUP BY stuld);
+CREATE VIEW view_01 as SELECT stuld,stuname FROM student WHERE stuld  IN(SELECT courseld FROM score GROUP BY stuld);
+-- 2.查询每门课程的平均成绩，结果按平均成绩升序排序，平均成绩相同时，按课程号降序排列
+select coursename,AVG(stuscore) 平均成绩 from course join score on course.Courseld=score.courseld GROUP BY course.courseld order by 平均成绩 ASC,course.courseld DESC;
+CREATE VIEW view_02 AS select coursename,AVG(stuscore) 平均成绩 from course join score on course.Courseld=score.courseld GROUP BY course.courseld order by 平均成绩 ASC,course.courseld desc;
+-- 3.查询课程名称为“语文”且分数低于60的学生姓名和分数
+SELECT stuname,stuscore FROM student LEFT OUTER JOIN score ON student.stuld=score.Stuld join course on score.Courseld=course.Courseld WHERE coursename='语文' AND stuscore<60; 
+create VIEW view_03 AS SELECT stuname,stuscore FROM student LEFT OUTER JOIN score ON student.stuld=score.Stuld join course on score.Courseld=course.Courseld WHERE coursename='语文' AND stuscore<60; 
+-- 4.查询任何一门课程成绩在70分以上的学生学号、姓名、课程号和分数
+SELECT student.stuld,stuname,courseld,stuscore FROM student JOIN score ON student.stuld=score.Stuld WHERE stuscore>70 GROUP BY stuld;
+CREATE VIEW view_04 AS SELECT student.stuld,stuname,courseld,stuscore FROM student JOIN score ON student.stuld=score.Stuld WHERE stuscore>70 GROUP BY stuld;
+-- 5.统计每门课程的学生选修人数，要求输出课程号和选修人数，查询结果按人数降序排序，若人数相同，按课程号降序排序
+SELECT course.courseld,COUNT(course.courseld) 选修人数 from course JOIN score ON course.Courseld=score.courseld GROUP BY course.courseld ORDER BY 选修人数 DESC,course.courseld DESC;
+CREATE VIEW view_05 AS SELECT course.courseld,COUNT(course.courseld) 选修人数 from course JOIN score ON course.Courseld=score.courseld GROUP BY course.courseld ORDER BY 选修人数 DESC,course.courseld DESC;
+-- 6.查询没学过“张三”老师讲授的任一门课程的学生姓名
+SELECT stuname FROM student JOIN score ON student.stuld=score.Stuld join course on score.Courseld=course.Courseld JOIN teacher ON course.Teald=teacher.teald WHERE teaname  IN('李四','王五') GROUP BY stuname;
+CREATE VIEW view_06 AS SELECT stuname FROM student JOIN score ON student.stuld=score.Stuld join course on score.Courseld=course.Courseld JOIN teacher ON course.Teald=teacher.teald WHERE teaname  IN('李四','王五') GROUP BY stuname;
+-- 7.查询出只选修了一门课程的全部学生的学号和姓名
+SELECT student.stuld,stuname FROM student JOIN score ON student.stuld=score.Stuld GROUP BY student.stuld HAVING COUNT(score.courseld)=1;
+-- 8.查询每门课程的平均成绩，结果按平均成绩升序排序，平均成绩相同时，按课程号降序排列
+SELECT avg(stuscore) 平均成绩 from score  GROUP BY courseld ORDER BY 平均成绩 ASC,courseld DESC;
+-- 9.查询课程名称为“语文”且分数低于60的学生姓名和分数
+SELECT stuname,stuscore FROM student JOIN score ON student.stuld=score.Stuld join course on score.Courseld=course.Courseld WHERE coursename='语文' AND stuscore<60;
+-- 10.查询任何一门课程成绩在70分以上的学生学号、姓名、课程号和分数
+SELECT stuld,stuname,courseld,stuscore FROM view_04;
+-- 11.统计每门课程的学生选修人数，要求输出课程号和选修人数，查询结果按人数降序排序，若人数相同，按课程号降序排序
+SELECT courseld,选修人数 from view_05;
+-- 12.查询没学过“张三”老师讲授的任一门课程的学生姓名
+SELECT stuname FROM view_06;
+
+
