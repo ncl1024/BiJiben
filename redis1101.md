@@ -405,7 +405,7 @@ ACID，是指数据库管理系统（DBMS）在写入或更新资料的过程中
 ```
 
 ```
-       12)zreamrangebyscore 键名 最低分 最高分   删除分数区间内的值
+       12)zremrangebyscore 键名 最低分 最高分   删除分数区间内的值
 ```
 
 ### 六、Redis数据库的事务操作     :camping:
@@ -414,11 +414,21 @@ ACID，是指数据库管理系统（DBMS）在写入或更新资料的过程中
 
    对比:在之前的操作中，每次执行操作命令时，都是一个一个按顺序执行的，有了事务，可以同步执行操作.      :dizzy:     :detective: 
 
-2.
+2.事务从开始到执行经过的三个阶段: :sagittarius: 
+
+```
+                            开始事务 ------> multi
+
+                            命令入队 ----->  各种操作命令
+
+                            执行事务 ----->  exec
+```
+
+:kissing_cat: 
 
 ### 七、Redis数据库的备份与恢复
 
-#### <font color = '#00ff00'>1.备份: Save</font>   :back: 
+#### <font color = '#00ff00'>1.备份: Save</font>   :back:
 
 备份完成后，会在redis的安装目录中生成一个**dump.rdb**文件,数据库的备份文件；
 
@@ -426,9 +436,9 @@ ACID，是指数据库管理系统（DBMS）在写入或更新资料的过程中
 
 有时候备份完成后，找不到该文件或不清楚**Redis**的安装目录，就可以借助命令: **config get dir**,显示**Redis**的路径;
 
-#### <font color = '#ff0000'>3.恢复 </font>     :hammer_and_wrench:     
+#### <font color = '#ff0000'>3.恢复 </font>     :hammer_and_wrench:     :face_with_thermometer:
 
-只需要把备份好的dump.rdb文件，放入到redis安装目录中，重启redis数据库即可；
+只需要把备份好的**dump.rdb**文件，放入到**redis安装目录中**，**重启redis数据库**即可；
 
 ------
 
@@ -444,7 +454,7 @@ ACID，是指数据库管理系统（DBMS）在写入或更新资料的过程中
         redis-server.exe  redis.windows.conf
 ```
 
-3.连接redis数据库
+3.连接redis数据库   :japanese_goblin:  :kissing_cat:   :santa: 
 
 ```
         再重新进入DOS系统窗口,再次进入redis目录;
@@ -452,7 +462,7 @@ ACID，是指数据库管理系统（DBMS）在写入或更新资料的过程中
         redis-cli.exe
 ```
 
-4.验证
+4.验证 :zap:   :family:    
 
 ```
         输入ping命令，得到PONG的结果值，就代表环境OK
